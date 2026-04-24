@@ -355,6 +355,7 @@ export default function Home() {
   // --- 状态管理 (State Management) ---
   const [currentView, setCurrentView] = useState('home');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false); // 新增：用于兼容平板的点击下拉状态
   const [language, setLanguage] = useState('en');
   const [clientIp, setClientIp] = useState('Fetching...');
   const [formStatus, setFormStatus] = useState('idle'); // idle, loading, success, error
@@ -487,7 +488,7 @@ export default function Home() {
         html[dir="rtl"] .whatsapp-float { right: auto; left: 30px; }
 
         .testimonial-card { width: 350px; flex-shrink: 0; white-space: normal; }
-        #video-intro, .py-24, #booking-form, footer { content-visibility: auto; contain-intrinsic-size: 1px 600px; }
+        .py-24, #booking-form, footer { content-visibility: auto; contain-intrinsic-size: 1px 600px; } /* 修复：移除了 #video-intro 以解决手机端视频无法点击的问题 */
         .asset-placeholder { background-color: #DBEAFE; border: 2px dashed #3B82F6; color: #1E3A8A; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; border-radius: 0.75rem; }
         .whatsapp-float { position: fixed; bottom: 30px; right: 30px; background-color: #166534; color: white; border-radius: 50px; padding: 12px 24px; font-weight: bold; box-shadow: 0 10px 25px rgba(22, 101, 52, 0.4); z-index: 100; display: flex; align-items: center; gap: 8px; transition: transform 0.3s; }
         .whatsapp-float:hover { transform: scale(1.05) translateY(-5px); }
@@ -507,16 +508,24 @@ export default function Home() {
               <button onClick={() => navigateTo('factory')} className={`font-medium transition-colors ${currentView === 'factory' ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}>{t('nav_factory')}</button>
               <a href="#booking-form" className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-blue-700 shadow-md transition-colors mx-2">{t('nav_quote')}</a>
               
-              {/* Language Switcher Desktop */}
-              <div className="relative inline-block text-left group">
-                <button type="button" className="inline-flex justify-center items-center w-full rounded-md border border-gray-200 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition-colors">
+              {/* Language Switcher Desktop & Tablet (修复平板触控问题) */}
+              <div 
+                className="relative inline-block text-left"
+                onMouseEnter={() => setIsLangOpen(true)}
+                onMouseLeave={() => setIsLangOpen(false)}
+              >
+                <button 
+                  type="button" 
+                  onClick={() => setIsLangOpen(!isLangOpen)}
+                  className="inline-flex justify-center items-center w-full rounded-md border border-gray-200 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition-colors"
+                >
                   🌐 <span className="mx-1 font-bold">{language.toUpperCase()}</span>
                 </button>
-                <div className="origin-top-right absolute end-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden group-hover:block transition-all">
+                <div className={`origin-top-right absolute end-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 transition-all ${isLangOpen ? 'block' : 'hidden'}`}>
                   <div className="py-1" role="menu" aria-orientation="vertical">
-                    <button onClick={() => changeLanguage('en')} className="w-full text-start block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50" role="menuitem">English</button>
-                    <button onClick={() => changeLanguage('es')} className="w-full text-start block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50" role="menuitem">Español</button>
-                    <button onClick={() => changeLanguage('ar')} className="w-full text-start block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50" role="menuitem">العربية (Arabic)</button>
+                    <button onClick={() => { changeLanguage('en'); setIsLangOpen(false); }} className="w-full text-start block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50" role="menuitem">English</button>
+                    <button onClick={() => { changeLanguage('es'); setIsLangOpen(false); }} className="w-full text-start block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50" role="menuitem">Español</button>
+                    <button onClick={() => { changeLanguage('ar'); setIsLangOpen(false); }} className="w-full text-start block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50" role="menuitem">العربية (Arabic)</button>
                   </div>
                 </div>
               </div>
@@ -611,7 +620,8 @@ export default function Home() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col md:flex-row items-center gap-16">
                 <div className="md:w-1/2">
-                  <div className="h-80 w-full shadow-lg rounded-2xl overflow-hidden bg-black relative">
+                  {/* 修复：增加 z-10 和 transform translateZ(0) 以解决部分移动端 iOS 浏览器 iframe 点击失效 Bug */}
+                  <div className="h-80 w-full shadow-lg rounded-2xl overflow-hidden bg-black relative z-10" style={{ transform: 'translateZ(0)' }}>
                     {/* 🔴🔴🔴 修改此处视频：将 src 中的 YouTube_Video_ID 替换为你上传的真实 YouTube 视频ID 🔴🔴🔴 */}
                     <iframe 
                       className="absolute top-0 left-0 w-full h-full" 
