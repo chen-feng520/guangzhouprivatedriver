@@ -499,7 +499,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20 items-center">
             <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => navigateTo('home')} role="button" tabIndex="0" aria-label="Go to homepage">
-              <span className="text-2xl font-bold text-gray-900 tracking-tight"> <span className="text-blue-600">Guangzhou</span>Private<span className="text-blue-600">Driver</span>.</span>
+              {/* 1. 在这里添加顶部 Logo 图片，请确保图片放到了 public/images/logo.png */}
+              <img src="/images/logo.png" alt="Guangzhou Private Driver Logo" className="h-10 w-auto mr-2" onError={(e) => e.target.style.display='none'} />
+              <span className="text-2xl font-bold text-gray-900 tracking-tight hidden sm:block"> <span className="text-blue-600">Guangzhou</span>Private<span className="text-blue-600">Driver</span>.</span>
             </div>
             <div className="hidden md:flex space-x-6 items-center">
               <button onClick={() => navigateTo('home')} className={`font-medium transition-colors ${currentView === 'home' ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}>{t('nav_home')}</button>
@@ -1078,7 +1080,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
-              <span className="text-2xl font-bold text-white tracking-tight"><span className="text-blue-500">Guangzhou</span>Private<span className="text-blue-500">Driver</span>.</span>
+              <div className="flex items-center mb-2">
+                {/* 2. 在这里添加页脚 Logo 图片（推荐白色或透明底色的 logo-white.png） */}
+                <img src="/images/logo-white.png" alt="Logo" className="h-8 w-auto mr-2" onError={(e) => e.target.style.display='none'} />
+                <span className="text-2xl font-bold text-white tracking-tight"><span className="text-blue-500">Guangzhou</span>Private<span className="text-blue-500">Driver</span>.</span>
+              </div>
               <p className="mt-4 text-sm">{t('ft_desc')}</p>
             </div>
             <div>
