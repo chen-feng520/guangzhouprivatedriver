@@ -36,9 +36,29 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  // 🔴 请将下方的 G-XXXXXXXXXX 替换为你在 Google Analytics 获取的真实衡量 ID
+  const G_TAG_ID = 'G-YHN9Y7136X'; 
+
   return (
-    // 强制声明 HTML 语言为英文，有利于外贸 SEO
     <html lang="en">
+      <head>
+        {/* Google Analytics 核心追踪代码 */}
+        <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${G_TAG_ID}`} />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${G_TAG_ID}', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
+      </head>
       <body className={inter.className}>
         {children}
       </body>
